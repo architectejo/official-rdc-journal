@@ -88,9 +88,24 @@ export interface RechercheParams {
   annee?: number;
   date_debut?: string;
   date_fin?: string;
+  matiere?: string;
+  mots_cles?: string[];
   page?: number;
   limit?: number;
 }
+
+// Matières juridiques
+export type MatiereJuridique =
+  | "Droit constitutionnel"
+  | "Droit administratif"
+  | "Droit fiscal"
+  | "Droit minier"
+  | "Droit commercial"
+  | "Droit du travail"
+  | "Droit pénal"
+  | "Droit foncier"
+  | "Droit électoral"
+  | "Droit de l'environnement";
 
 // Réponse paginée
 export interface ReponsePaginee<T> {

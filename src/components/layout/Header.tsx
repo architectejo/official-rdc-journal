@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, User, LogIn } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const navigationItems = [
   { label: "Accueil", href: "/" },
@@ -63,14 +64,19 @@ export function Header() {
             ))}
           </nav>
 
-          {/* Bouton administration */}
-          <div className="hidden lg:block">
-            <Link
-              to="/dashboard"
-              className="px-4 py-2 text-sm font-medium bg-primary-foreground text-primary rounded hover:bg-primary-foreground/90 transition-colors"
-            >
-              Administration
-            </Link>
+          {/* Boutons d'action */}
+          <div className="hidden lg:flex items-center gap-2">
+            <Button asChild variant="ghost" size="sm" className="text-header-foreground hover:bg-primary-foreground/10">
+              <Link to="/login">
+                <LogIn className="w-4 h-4 mr-2" />
+                Connexion
+              </Link>
+            </Button>
+            <Button asChild size="sm" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+              <Link to="/dashboard">
+                Administration
+              </Link>
+            </Button>
           </div>
 
           {/* Bouton menu mobile */}
@@ -104,6 +110,14 @@ export function Header() {
               </Link>
             ))}
             <hr className="my-2 border-header-foreground/10" />
+            <Link
+              to="/login"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-4 py-3 text-sm font-medium text-header-foreground/80 hover:text-header-foreground hover:bg-primary-foreground/5 rounded transition-colors text-center"
+            >
+              <LogIn className="w-4 h-4 inline mr-2" />
+              Connexion
+            </Link>
             <Link
               to="/dashboard"
               onClick={() => setMobileMenuOpen(false)}
