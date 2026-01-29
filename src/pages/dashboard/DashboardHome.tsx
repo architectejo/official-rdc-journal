@@ -1,8 +1,40 @@
-import { BookOpen, FileText, Building2, TrendingUp, Calendar } from "lucide-react";
+import { BookOpen, FileText, Building2, TrendingUp, Download, Users, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getStatistiquesDashboard } from "@/services/api";
+import { mockDashboardStats } from "@/services/mockUsers";
 import type { StatistiquesDashboard } from "@/types/journal";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatCard } from "@/components/common/StatCard";
+import { PublicationsChart, RevenueChart, TextesByTypeChart, DownloadsChart } from "@/components/charts/DashboardCharts";
+
+// Données mockées pour les graphiques
+const publicationsData = [
+  { mois: "Août", publications: 18 },
+  { mois: "Sept", publications: 22 },
+  { mois: "Oct", publications: 15 },
+  { mois: "Nov", publications: 28 },
+  { mois: "Déc", publications: 32 },
+  { mois: "Jan", publications: 12 },
+];
+
+const revenueData = [
+  { mois: "Août", revenus: 450000 },
+  { mois: "Sept", revenus: 520000 },
+  { mois: "Oct", revenus: 380000 },
+  { mois: "Nov", revenus: 650000 },
+  { mois: "Déc", revenus: 780000 },
+  { mois: "Jan", revenus: 420000 },
+];
+
+const downloadsData = [
+  { jour: "Lun", telechargements: 45 },
+  { jour: "Mar", telechargements: 52 },
+  { jour: "Mer", telechargements: 38 },
+  { jour: "Jeu", telechargements: 65 },
+  { jour: "Ven", telechargements: 48 },
+  { jour: "Sam", telechargements: 25 },
+  { jour: "Dim", telechargements: 18 },
+];
 
 export default function DashboardHome() {
   const [stats, setStats] = useState<StatistiquesDashboard | null>(null);
@@ -20,12 +52,18 @@ export default function DashboardHome() {
     fetchData();
   }, []);
 
-  const statCards = [
-    { label: "Numéros du JO", value: stats?.total_journaux || 0, icon: BookOpen, color: "text-primary" },
-    { label: "Textes Officiels", value: stats?.total_textes || 0, icon: FileText, color: "text-primary" },
-    { label: "Institutions", value: stats?.total_institutions || 0, icon: Building2, color: "text-primary" },
-    { label: "Ce mois", value: stats?.textes_ce_mois || 0, icon: TrendingUp, color: "text-success" },
-  ];
+  const textesParType = stats?.textes_par_type
+    ? Object.entries(stats.textes_par_type).map(([type, count]) => ({ type, count }))
+    : [];
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("fr-CD", {
+      style: "currency",
+      currency: "CDF",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
   return (
     <div className="space-y-6">
@@ -34,24 +72,45 @@ export default function DashboardHome() {
         <p className="text-muted-foreground">Vue d'ensemble du Journal Officiel</p>
       </div>
 
+      {/* Statistiques principales */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map((stat) => (
-          <Card key={stat.label}>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  <p className="text-3xl font-bold text-foreground">
-                    {loading ? "—" : stat.value}
-                  </p>
-                </div>
-                <stat.icon className={`w-8 h-8 ${stat.color} opacity-80`} />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        <StatCard
+          label="Numéros du JO"
+          value={loading ? "—" : stats?.total_journaux || 0}
+          icon={BookOpen}
+          trend={{ value: 8, isPositive: true }}
+        />
+        <StatCard
+          label="Textes Officiels"
+          value={loading ? "—" : stats?.total_textes || 0}
+          icon={FileText}
+          trend={{ value: 12, isPositive: true }}
+        />
+        <StatCard
+          label="Utilisateurs"
+          value={loading ? "—" : mockDashboardStats.totalUsers}
+          icon={Users}
+        />
+        <StatCard
+          label="Revenus ce mois"
+          value={loading ? "—" : formatCurrency(mockDashboardStats.revenueThisMonth)}
+          icon={DollarSign}
+          trend={{ value: 15, isPositive: true }}
+        />
       </div>
 
+      {/* Graphiques */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PublicationsChart data={publicationsData} />
+        <RevenueChart data={revenueData} />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {textesParType.length > 0 && <TextesByTypeChart data={textesParType} />}
+        <DownloadsChart data={downloadsData} />
+      </div>
+
+      {/* Derniers contenus */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>

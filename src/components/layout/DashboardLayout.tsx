@@ -6,10 +6,10 @@ import {
   Building2,
   Users,
   Settings,
-  LogOut,
   Menu,
-  X,
   ChevronLeft,
+  CreditCard,
+  BarChart3,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -35,12 +35,27 @@ const sidebarItems = [
     href: "/dashboard/institutions",
     icon: Building2,
   },
+  {
+    label: "Utilisateurs",
+    href: "/dashboard/users",
+    icon: Users,
+  },
+  {
+    label: "Paiements",
+    href: "/dashboard/payments",
+    icon: CreditCard,
+  },
+  {
+    label: "Rapports",
+    href: "/dashboard/reports",
+    icon: BarChart3,
+  },
 ];
 
 const bottomItems = [
   {
     label: "Paramètres",
-    href: "/dashboard/parametres",
+    href: "/dashboard/settings",
     icon: Settings,
   },
 ];
